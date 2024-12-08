@@ -1,13 +1,13 @@
 all: | part1 part2
 
 part1: main
-	@echo "PART1 - TEST - "
+	@echo "PART1 - TEST - 2"
 	@./main 1 < test.txt
 	@echo "PART1 - ?"
 	@/usr/bin/time ./main 1 < puzzle.txt
 
 part2: main
-	@echo "PART2 - TEST - "
+	@echo "PART2 - TEST - 4"
 	@./main 2 < test.txt
 	@echo "PART2 - ?"
 	@/usr/bin/time ./main 2 < puzzle.txt
