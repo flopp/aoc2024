@@ -12,15 +12,19 @@ struct XY {
         return x == other.x && y == other.y;
     }
 
-    XY left() const { return XY{x-1, y}; }
-    XY right() const { return XY{x+1, y}; }
-    XY up() const { return XY{x, y-1}; }
-    XY down() const { return XY{x, y+1}; }
+    XY n()  const { return XY{x, y-1}; }
+    XY ne() const { return XY{x+1, y-1}; }
+    XY e()  const { return XY{x+1, y}; }
+    XY se() const { return XY{x+1, y+1}; }
+    XY s()  const { return XY{x, y+1}; }
+    XY sw() const { return XY{x-1, y+1}; }
+    XY w()  const { return XY{x-1, y}; }
+    XY nw() const { return XY{x-1, y-1}; }
     XY dir4(int d) const {
-        if (d == 0) {return right();}
-        if (d == 1) {return down();}
-        if (d == 2) {return left();}
-        if (d == 3) {return up();}
+        if (d == 0) {return e();}
+        if (d == 1) {return s();}
+        if (d == 2) {return w();}
+        if (d == 3) {return n();}
         return *this;
     }
 
@@ -91,6 +95,7 @@ int main(int argc, char** argv)
             // determine fence length
             int fence = 0;
             if (part1) {
+                // count border sides
                 for (const auto& field: region) {
                     for (int d = 0; d < 4; ++d) {
                         const XY next = field.dir4(d);
@@ -100,9 +105,34 @@ int main(int argc, char** argv)
                     }
                 }
             } else {
-            
+                // count corners, because #sides = #corners
+                for (const auto& field: region) {
+                    XY n  = field.n();
+                    XY ne = field.ne();
+                    XY e  = field.e();
+                    XY se = field.se();
+                    XY s  = field.s();
+                    XY sw = field.sw();
+                    XY w  = field.w();
+                    XY nw = field.nw();
+
+                    bool xn  = grid[n.y][n.x] != c;
+                    bool xne = grid[ne.y][ne.x] != c;
+                    bool xe  = grid[e.y][e.x] != c;
+                    bool xse = grid[se.y][se.x] != c;
+                    bool xs  = grid[s.y][s.x] != c;
+                    bool xsw = grid[sw.y][sw.x] != c;
+                    bool xw  = grid[w.y][w.x] != c;
+                    bool xnw = grid[nw.y][nw.x] != c;
+
+                    // convex && concave corners
+                    if ((xn && xw) || (xnw && !xn && !xw)) ++fence;
+                    if ((xn && xe) || (xne && !xn && !xe)) ++fence;
+                    if ((xs && xe) || (xse && !xs && !xe)) ++fence;
+                    if ((xs && xw) || (xsw && !xs && !xw)) ++fence;
+                }
             }
-            totalPrice += region.size() * fence;;
+            totalPrice += region.size() * fence;
         }
     }
 
